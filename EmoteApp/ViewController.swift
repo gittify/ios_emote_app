@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var trayView: UIView!
     var trayOriginalCenter: CGPoint!
@@ -21,6 +21,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         trayCenterWhenOpen = CGPoint(x: 160.0, y: 459.5)
         trayCenterWhenClosed = CGPoint(x: 160.0, y: 632.0)
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -62,6 +63,12 @@ class ViewController: UIViewController {
             
             // Create a new image view that has the same image as the one currently panning
             newlyCreatedFace = UIImageView(image: imageView.image)
+            newlyCreatedFace.isUserInteractionEnabled = true
+            let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.handlePinch(gestureRecognizer:)))
+            let rotateGestureRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(self.handleRotate(gestureRecognizer:)))
+            newlyCreatedFace.addGestureRecognizer(pinchGestureRecognizer)
+            newlyCreatedFace.addGestureRecognizer(rotateGestureRecognizer)
+            
             
             // Add the new face to the tray's parent view.
             view.addSubview(newlyCreatedFace)
@@ -79,6 +86,21 @@ class ViewController: UIViewController {
 
         }
     
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func handlePinch(gestureRecognizer: UIGestureRecognizer) {
+        print("pinch")
+        gestureRecognizer.view?.transform = CGAffineTransform(scaleX: 2, y: 2)
+    }
+    
+    
+    func handleRotate(gestureRecognizer: UIGestureRecognizer) {
+        print("rotate")
+        gestureRecognizer.view?.transform = CGAffineTransform(rotationAngle: CGFloat(45 * M_PI / 180))
     }
     
     @IBAction func onDragSmiley(_ sender: UIPanGestureRecognizer) {
